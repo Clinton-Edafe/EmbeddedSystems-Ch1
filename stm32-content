@@ -1,0 +1,137 @@
+# STM32 Embedded C Programming Course Documentation
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Setting Up the Development Environment](#setting-up-the-development-environment)
+- [Understanding STM32 Microcontrollers](#understanding-stm32-microcontrollers)
+- [GPIO (General Purpose Input Output)](#gpio-general-purpose-input-output)
+- [Interrupts and Timers](#interrupts-and-timers)
+- [USART Communication](#usart-communication)
+- [I2C and SPI Protocols](#i2c-and-spi-protocols)
+- [ADC (Analog to Digital Conversion)](#adc-analog-to-digital-conversion)
+- [PWM (Pulse Width Modulation)](#pwm-pulse-width-modulation)
+- [Low Power Modes](#low-power-modes)
+- [Best Practices](#best-practices)
+- [Conclusion](#conclusion)
+
+---
+
+## Introduction
+STM32 microcontrollers are widely used in embedded systems due to their efficiency, flexibility, and cost-effectiveness. They are based on ARM Cortex-M cores, providing a robust platform for various applications, from simple automation to complex real-time control systems. 
+
+This documentation serves as a detailed guide for programming STM32 microcontrollers using Embedded C. It covers the fundamental concepts, including GPIO handling, communication protocols, interrupts, timers, and power management. Additionally, the document provides practical code examples and best practices to help developers optimize their embedded applications.
+
+By the end of this documentation, you should have a strong understanding of how to program STM32 microcontrollers, configure peripherals, and implement efficient embedded system designs.
+
+## Setting Up the Development Environment
+To get started with STM32 development, ensure you have:
+
+- **Hardware:** STM32 Development Board (e.g., STM32F103C8T6)
+- **Software:**
+  - STM32CubeIDE or Keil uVision
+  - STM32CubeMX for peripheral initialization
+  - GNU ARM Toolchain
+- **Drivers:** Install ST-Link/V2 drivers
+
+## Understanding STM32 Microcontrollers
+STM32 MCUs are based on ARM Cortex-M cores and categorized into different series (F0, F1, F4, etc.). Key features include:
+- Low-power modes
+- Rich peripheral set (GPIO, UART, SPI, I2C, ADC, PWM, etc.)
+- Flexible clock configuration
+
+## GPIO (General Purpose Input Output)
+GPIOs allow the microcontroller to interface with external components.
+
+### Configuring GPIO in STM32CubeMX
+1. Open STM32CubeMX and select the target MCU.
+2. Configure GPIO pins as **input, output, alternate function, or analog.**
+3. Generate the initialization code and open it in STM32CubeIDE.
+
+### GPIO Example Code
+```c
+// Initialize GPIO
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+
+// Toggle LED
+HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+HAL_Delay(1000);
+```
+
+## Interrupts and Timers
+Interrupts allow the MCU to respond to events without polling.
+
+### Configuring External Interrupt
+```c
+void EXTI0_IRQHandler(void) {
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    HAL_Delay(500);
+}
+```
+
+### Timer Interrupt Example
+```c
+void TIM2_IRQHandler(void) {
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+}
+```
+
+## USART Communication
+USART is used for serial communication with peripherals.
+
+### Initializing USART
+```c
+UART_HandleTypeDef huart2;
+huart2.Instance = USART2;
+huart2.Init.BaudRate = 115200;
+huart2.Init.WordLength = UART_WORDLENGTH_8B;
+```
+
+## I2C and SPI Protocols
+Both I2C and SPI are used for communication with sensors, displays, and memory chips.
+
+### I2C Read Example
+```c
+HAL_I2C_Master_Receive(&hi2c1, DEVICE_ADDR, data_buffer, length, HAL_MAX_DELAY);
+```
+
+### SPI Write Example
+```c
+HAL_SPI_Transmit(&hspi1, data, size, HAL_MAX_DELAY);
+```
+
+## ADC (Analog to Digital Conversion)
+STM32 ADC allows reading analog values from sensors.
+
+### ADC Configuration
+```c
+HAL_ADC_Start(&hadc1);
+HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+uint32_t value = HAL_ADC_GetValue(&hadc1);
+```
+
+## PWM (Pulse Width Modulation)
+PWM is used for motor control, dimming LEDs, and generating signals.
+
+### PWM Initialization
+```c
+TIM_OC_InitTypeDef sConfigOC;
+sConfigOC.OCMode = TIM_OCMODE_PWM1;
+sConfigOC.Pulse = 1000;
+HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1);
+```
+
+## Low Power Modes
+STM32 provides Sleep, Stop, and Standby modes for power optimization.
+
+### Entering Sleep Mode
+```c
+HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+```
+
+## Best Practices
+- Always enable the required peripherals before use.
+- Use interrupts instead of polling for efficiency.
+- Optimize power consumption using low-power modes.
+
+## Conclusion
+This documentation covers fundamental STM32 programming concepts. Further exploration into RTOS, DMA, and advanced peripherals is recommended for more complex projects.
