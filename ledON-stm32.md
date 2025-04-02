@@ -5,6 +5,40 @@
 This document provides a step-by-step guide to turning on the onboard LED of an STM32 microcontroller (e.g., STM32F103C8T6, also known as the "Blue Pill") by writing directly to the hardware registers. We will avoid using any high-level libraries like HAL or CMSIS, focusing solely on direct memory-mapped I/O access. This approach helps embedded systems beginners understand how microcontrollers operate at a low level.
 
 ---
+# Explanation of the Code Below
+
+## Enabling GPIOC Clock
+
+The **RCC (Reset and Clock Control)** peripheral manages the clocks for other peripherals in the STM32 microcontroller.
+
+- The **RCC_APB2ENR** register is responsible for enabling the GPIOC clock. This is done by setting **bit 4** in the register.
+
+---
+
+## Configuring PC13 as an Output
+
+The **GPIOC_CRH** register (GPIO Configuration Register High) controls the configuration of pins 8–15 of **Port C**.
+
+- Since **PC13** falls within this range, we modify bits **23:20** of the **GPIOC_CRH** register.
+- The value **0x2** (binary `0010`) is written to the register, which sets **PC13** as a **2 MHz push-pull output**.
+
+---
+
+## Turning the LED On
+
+The LED on most STM32 boards (e.g., Blue Pill) is **active low**.
+
+- To turn the LED on, we write **0** to **PC13** in the **GPIOC_ODR** (Output Data Register).
+- Writing **0** to **PC13** effectively turns the LED on.
+
+---
+
+## Final Thoughts Before the Implementation
+
+This example demonstrates how to interact with STM32 hardware directly using **memory-mapped registers**.
+
+- By using direct register access, engineers can have full control over the microcontroller, allowing for optimized performance and reduced memory usage.
+- This low-level approach is essential for embedded systems engineers aiming to build efficient and highly optimized embedded applications.
 
 ## Understanding STM32 GPIO Registers
 
@@ -61,38 +95,5 @@ int main(void) {
     return 0; // This line will never be reached
 }
 
-# Explanation of the Code
 
-## Enabling GPIOC Clock
-
-The **RCC (Reset and Clock Control)** peripheral manages the clocks for other peripherals in the STM32 microcontroller.
-
-- The **RCC_APB2ENR** register is responsible for enabling the GPIOC clock. This is done by setting **bit 4** in the register.
-
----
-
-## Configuring PC13 as an Output
-
-The **GPIOC_CRH** register (GPIO Configuration Register High) controls the configuration of pins 8–15 of **Port C**.
-
-- Since **PC13** falls within this range, we modify bits **23:20** of the **GPIOC_CRH** register.
-- The value **0x2** (binary `0010`) is written to the register, which sets **PC13** as a **2 MHz push-pull output**.
-
----
-
-## Turning the LED On
-
-The LED on most STM32 boards (e.g., Blue Pill) is **active low**.
-
-- To turn the LED on, we write **0** to **PC13** in the **GPIOC_ODR** (Output Data Register).
-- Writing **0** to **PC13** effectively turns the LED on.
-
----
-
-## Conclusion
-
-This example demonstrates how to interact with STM32 hardware directly using **memory-mapped registers**.
-
-- By using direct register access, engineers can have full control over the microcontroller, allowing for optimized performance and reduced memory usage.
-- This low-level approach is essential for embedded systems engineers aiming to build efficient and highly optimized embedded applications.
 
